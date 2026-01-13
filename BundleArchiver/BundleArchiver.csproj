@@ -10,6 +10,7 @@
     <Copyright>© 2026 Lacyway</Copyright>
     <Description>Bundle archiver for SPT mods</Description>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
