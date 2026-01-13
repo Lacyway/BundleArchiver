@@ -1,0 +1,77 @@
+name: Build And Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+      build_type:
+        type: choice
+        description: 'The build configuration (e.g., Release)'
+        required: true
+        options: 
+        - Release
+        - Debug
+
+jobs:
+  build-windows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          cache: true
+          cache-dependency-path: 'BundleArchiver/packages.lock.json'
+
+      - name: Restore dependencies
+        run: dotnet restore BundleArchiver.slnx
+
+      - name: Publish Windows build (framework-dependent single file)
+        run: |
+          dotnet publish BundleArchiver/BundleArchiver.csproj \
+            --configuration ${{ inputs.build_type }} \
+            --no-restore \
+            --runtime win-x64 \
+            --output output/windows/ \
+            -p:PublishSingleFile=true \
+            -p:SelfContained=false \
+            -p:DebugType=None \
+            -p:DebugSymbols=false \
+            -p:PublishTrimmed=false
+
+      - name: Zip Windows build
+        run: |
+          cd output/windows
+          zip -r "../../BundleArchiver ${{ inputs.release_version }}.zip" .
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BundleArchiver ${{ inputs.release_version }}
+          path: BundleArchiver ${{ inputs.release_version }}.zip
+
+  release:
+    needs: [build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: releases
+
+      - name: Create GitHub Release Draft
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.release_version }}
+          name: BundleArchiver ${{ inputs.release_version }}
+          draft: true
+          files: |
+            releases/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
