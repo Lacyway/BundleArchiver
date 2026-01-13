@@ -30,7 +30,10 @@ jobs:
           cache-dependency-path: 'BundleArchiver/packages.lock.json'
 
       - name: Restore dependencies
-        run: dotnet restore BundleArchiver.slnx
+        run: |
+          dotnet restore BundleArchiver/BundleArchiver.csproj \
+            -r win-x64 \
+            -p:EnableWindowsTargeting=true
 
       - name: Publish Windows build (framework-dependent single file)
         run: |
