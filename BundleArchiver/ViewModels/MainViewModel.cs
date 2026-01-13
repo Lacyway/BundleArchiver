@@ -101,7 +101,7 @@ public class MainViewModel : INotifyPropertyChanged
         CanScan = false;
         Mods.Clear();
 
-        var dir = Path.Combine(Environment.CurrentDirectory, "SPT/user/mods");
+        var dir = Path.Combine(AppContext.BaseDirectory, "SPT/user/mods");
         var mods = await GetAllBundleFiles(dir);
         foreach (var mod in mods)
         {
@@ -201,7 +201,7 @@ public class MainViewModel : INotifyPropertyChanged
     private async Task ZipFiles(List<ModInfo> modInfos, IProgress<(double percent, string status)> progress,
         CancellationToken cancellationToken = default)
     {
-        var zipPath = Path.Combine(Environment.CurrentDirectory, "ArchivedBundles.zip");
+        var zipPath = Path.Combine(AppContext.BaseDirectory, "ArchivedBundles.zip");
 
         if (File.Exists(zipPath))
         {
@@ -249,7 +249,7 @@ public class MainViewModel : INotifyPropertyChanged
 #if RELEASE
     public void RunCheck()
     {
-        var path = Path.Combine(Environment.CurrentDirectory, "SPT/user/mods");
+        var path = Path.Combine(AppContext.BaseDirectory, "SPT/user/mods");
         if (!Directory.Exists(path))
         {
             ShowDialog("Could not find the SPT folder.\nMake sure that you are running the tool from your SPT installation folder/server folder!");
