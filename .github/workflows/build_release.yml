@@ -1,5 +1,8 @@
 name: Build And Publish
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -10,9 +13,9 @@ on:
         type: choice
         description: 'The build configuration (e.g., Release)'
         required: true
-        options: 
-        - Release
-        - Debug
+        options:
+          - Release
+          - Debug
 
 jobs:
   build-windows:
@@ -30,7 +33,10 @@ jobs:
           cache-dependency-path: 'BundleArchiver/packages.lock.json'
 
       - name: Restore dependencies
-        run: dotnet restore BundleArchiver.slnx
+        run: |
+          dotnet restore BundleArchiver/BundleArchiver.csproj \
+            -r win-x64 \
+            -p:EnableWindowsTargeting=true
 
       - name: Publish Windows build (framework-dependent single file)
         run: |
@@ -45,25 +51,26 @@ jobs:
             -p:DebugSymbols=false \
             -p:PublishTrimmed=false
 
-      - name: Zip Windows build
-        run: |
-          cd output/windows
-          zip -r "../../BundleArchiver ${{ inputs.release_version }}.zip" .
-
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: BundleArchiver ${{ inputs.release_version }}
-          path: BundleArchiver ${{ inputs.release_version }}.zip
+          path: output/windows/**
 
   release:
     needs: [build-windows]
     runs-on: ubuntu-latest
+
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: releases
+
+      - name: Zip Windows release
+        run: |
+          cd "releases/BundleArchiver ${{ inputs.release_version }}"
+          zip -r "../../BundleArchiver ${{ inputs.release_version }}.zip" .
 
       - name: Create GitHub Release Draft
         uses: softprops/action-gh-release@v2
@@ -72,6 +79,6 @@ jobs:
           name: BundleArchiver ${{ inputs.release_version }}
           draft: true
           files: |
-            releases/**/*.zip
+            BundleArchiver ${{ inputs.release_version }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
