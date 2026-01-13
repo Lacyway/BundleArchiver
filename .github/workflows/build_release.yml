@@ -10,9 +10,9 @@ on:
         type: choice
         description: 'The build configuration (e.g., Release)'
         required: true
-        options: 
-        - Release
-        - Debug
+        options:
+          - Release
+          - Debug
 
 jobs:
   build-windows:
@@ -57,11 +57,17 @@ jobs:
   release:
     needs: [build-windows]
     runs-on: ubuntu-latest
+
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: releases
+
+      - name: Zip Windows release
+        run: |
+          cd "releases/BundleArchiver ${{ inputs.release_version }}"
+          zip -r "../../BundleArchiver ${{ inputs.release_version }}.zip" .
 
       - name: Create GitHub Release Draft
         uses: softprops/action-gh-release@v2
@@ -70,6 +76,6 @@ jobs:
           name: BundleArchiver ${{ inputs.release_version }}
           draft: true
           files: |
-            releases/**/*.zip
+            BundleArchiver ${{ inputs.release_version }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
