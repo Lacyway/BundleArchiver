@@ -48,16 +48,11 @@ jobs:
             -p:DebugSymbols=false \
             -p:PublishTrimmed=false
 
-      - name: Zip Windows build
-        run: |
-          cd output/windows
-          zip -r "../../BundleArchiver ${{ inputs.release_version }}.zip" .
-
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: BundleArchiver ${{ inputs.release_version }}
-          path: BundleArchiver ${{ inputs.release_version }}.zip
+          path: output/windows/**
 
   release:
     needs: [build-windows]
