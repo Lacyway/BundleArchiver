@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -190,10 +191,10 @@ public partial class MainWindowViewModel : ViewModelBase
         foreach (var bundleDir in bundleDirs)
         {
             var bundleFiles = bundleDir.EnumerateFiles("*.bundle", SearchOption.AllDirectories)
-                .OrderByDescending(f => f.Length);
-            var collection = new ObservableCollection<FileInfo>(bundleFiles);
+                .OrderByDescending(f => f.Length)
+                .ToImmutableArray();
             var name = bundleDir.Parent?.Name ?? "Unknown mod";
-            files.Add(new ModInfo(name, collection));
+            files.Add(new ModInfo(name, bundleFiles));
         }
 
         return [.. files];
