@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:BundleArchiverAvalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:conv="clr-namespace:BundleArchiverAvalonia.Converters;assembly=BundleArchiverAvalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BundleArchiverAvalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/icon.ico"
+        Title="Bundle Archiver" Height="450" Width="800">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+	<Window.Resources>
+		<conv:FileSizeConverter x:Key="FileSizeConverter"/>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<DataGrid ItemsSource="{Binding Mods}" CanUserResizeColumns="True">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Mod" IsReadOnly="True" Binding="{Binding Name}" Width="400"/>
+				<DataGridTextColumn Header="Bundles" IsReadOnly="True" Binding="{Binding BundleFiles.Count}" Width="150"/>
+				<DataGridTextColumn Header="Size" IsReadOnly="True" Binding="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}" Width="150"/>
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+			<Button Width="80" Margin="10" Content="Scan" Command="{Binding ScanCommand}"/>
+			<Button Width="80" Margin="10" Content="Start" Command="{Binding StartCommand}"/>
+			<CheckBox Margin="10" Content="High Compression" IsChecked="{Binding HighCompression}" ToolTip.Tip="If enabled, the resulting .zip file will be smaller, but the archiving process is slower&#10;&#10;NOTE: Results may vary"/>
+		</StackPanel>
+		
+	</Grid>
+
+</Window>

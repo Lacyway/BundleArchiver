@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="BundleArchiver/BundleArchiver.csproj" />
+  <Project Path="BundleArchiverAvalonia/BundleArchiverAvalonia.csproj" Id="ec53190c-ecca-47ce-9f94-7f83b9f0554d" />
 </Solution>

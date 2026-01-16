@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				xmlns:vm="using:BundleArchiverAvalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:conv="clr-namespace:BundleArchiverAvalonia.Converters;assembly=BundleArchiverAvalonia"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="175"
+        x:Class="BundleArchiverAvalonia.ProgressWindow"
+				x:DataType="vm:ProgressWindowViewModel"
+				CanResize="False"
+				ExtendClientAreaChromeHints="NoChrome"
+				ExtendClientAreaToDecorationsHint="True"
+        Title="Zipping archive" Height="175" Width="600">
+
+	<Window.Resources>
+		<conv:ProgressToTextConverter x:Key="ProgressConverter"/>
+	</Window.Resources>
+
+	<Design.DataContext>
+		<vm:ProgressWindowViewModel/>
+	</Design.DataContext>
+
+	<Border BorderThickness="2">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="2*"/>
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Row="0" Margin="10">
+				<TextBlock Text="{Binding Status}" Margin="0,0,0,10"/>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="8*"/>
+						<ColumnDefinition Width="0.5*"/>
+					</Grid.ColumnDefinitions>
+
+					<ProgressBar Minimum="0"
+											 Maximum="100"
+											 Height="15"
+											 Value="{Binding Progress}"/>
+					<TextBlock Grid.Column="1"
+										 VerticalAlignment="Center"
+										 HorizontalAlignment="Center"
+										 Text="{Binding Progress, Converter={StaticResource ProgressConverter}}"/>
+				</Grid>
+			</StackPanel>
+
+			<StackPanel Margin="5" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+				<Button Width="80"
+								Margin="5"
+								Content="OK"
+								Command="{Binding ContinueCommand}"/>
+				<Button Width="80"
+								Margin="5"
+								Content="Cancel"
+								Command="{Binding CancelCommand}"/>
+			</StackPanel>
+
+		</Grid>
+	</Border>
+</Window>
