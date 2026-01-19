@@ -56,10 +56,24 @@ public partial class MainWindowViewModel : ViewModelBase
         CanScan = true;
 
         CanStart = Mods.Count > 0;
-        /*if (!CanStart)
+        if (!CanStart)
         {
-            ShowDialog("No mods with bundles could be found.");
-        }*/
+            await ShowDialog("Info", "No mods with bundles could be found.");
+        }
+    }
+
+    public async Task ShowDialog(string title, string message)
+    {
+        if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var window = new MessageBox
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            window.SetText(title, message);
+            window.SetCloseAction(window.Close);
+            await window.ShowDialog(desktop!.MainWindow!);
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanStart))]
@@ -205,4 +219,20 @@ public partial class MainWindowViewModel : ViewModelBase
     {
 
     }
+
+#if RELEASE
+    public async Task RunCheck()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "SPT/user/mods");
+        if (!Directory.Exists(path))
+        {
+            await ShowDialog("Error", "Could not find the SPT folder.\nMake sure that you are running the tool from your SPT installation folder/server folder!");
+            CanScan = false;
+        }
+        else
+        {
+            CanScan = true;
+        }
+    }
+#endif
 }
