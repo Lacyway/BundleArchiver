@@ -7,5 +7,5 @@ The bundle archiver was made to easily .zip up and send your bundles to your fri
 3. Click `Scan` to scan for all mods with bundles
 4. If you want to, enable high compression to reduce file size, but the archiving process will be slower
 5. Click `Start` and wait
-6. Send the output (it will be placed in the same folder as `ArchivedBundles.zip`) to your friends
+6. Send the output file 'ArchivedBundles.zip' (it will be placed in the same folder as `EscapeFromTarkov.exe`) to your friends
 7. Have them extract it to their own SPT installation folder
