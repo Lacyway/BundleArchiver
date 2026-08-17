@@ -101,7 +101,7 @@ public class MainViewModel : INotifyPropertyChanged
         CanScan = false;
         Mods.Clear();
 
-        var dir = Path.Combine(AppContext.BaseDirectory, "SPT/user/mods");
+        var dir = Path.Combine(AppContext.BaseDirectory, "SPT_Runtime", "user", "mods");
         var mods = await GetAllBundleFiles(dir);
         foreach (var mod in mods)
         {
@@ -228,7 +228,7 @@ public class MainViewModel : INotifyPropertyChanged
                     var relativePath = file.FullName[(index + "bundles".Length)..]
                         .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-                    var entryName = Path.Combine("SPT/user/cache/bundles", relativePath);
+                    var entryName = Path.Combine("SPT_Runtime", "user", "cache", "bundles", relativePath);
 
                     var entry = zip.CreateEntry(entryName, _highCompression ? CompressionLevel.SmallestSize : CompressionLevel.Fastest);
                     await using var entryStream = entry.Open();
@@ -249,7 +249,7 @@ public class MainViewModel : INotifyPropertyChanged
 #if RELEASE
     public void RunCheck()
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "SPT/user/mods");
+        var path = Path.Combine(AppContext.BaseDirectory, "SPT_Runtime", "user", "mods");
         if (!Directory.Exists(path))
         {
             ShowDialog("Could not find the SPT folder.\nMake sure that you are running the tool from your SPT installation folder/server folder!");
